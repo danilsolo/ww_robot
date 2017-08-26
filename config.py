@@ -1,4 +1,5 @@
-token = "439405383:AAE-q6zks9ACfz5fjZIt0R-4GZxCvudXI_E"
+token = "439405383:AAEuNE8fZegg00zArV1LEFzAyVd-2Sngea0"
+#421498566:AAFSjRlphLesMSofDCe0QG4kvYpjDzKG8v0
 
 admins = ['Vozhik', 'Hedina69', 'belaya_devushka', 'danilsolo']
 
