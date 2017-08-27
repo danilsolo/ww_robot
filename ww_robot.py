@@ -292,9 +292,9 @@ def getprofile(message):
             bot.send_message(message.from_user.id, 'Ты отсылаешь мне какую-то дичь попробуй написать /start')
 
 
-@bot.message_handler(func=lambda message: True, content_types='text')
+@bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_all(message):
-    logging.debug(niceprint(str(message)))
+    # logging.debug(niceprint(str(message)))
     logging.debug(str(message.from_user.username) + ': ' + message.text)
 
     if 'Ты встретил' in message.text and message.forward_from:
