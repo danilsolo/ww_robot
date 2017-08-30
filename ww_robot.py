@@ -8,7 +8,8 @@ import datetime
 import config
 
 BOTCHAT = 76201733
-logging.basicConfig(format = u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level = logging.DEBUG)
+logging.basicConfig(format = u'%(filename)s[LINE:%(lineno)-4s]# %(levelname)-5s [%(asctime)s] %(message)s', level = logging.INFO)
+
 
 def niceprint(string):
     tabindex = 0
@@ -35,7 +36,7 @@ bot = telebot.TeleBot(config.token)
 def send_welcome(message):
     userid = message.from_user.id
     username = message.from_user.username
-    logging.debug('user: ' + str(username) + ' command: /start')
+    logging.info('user: ' + str(username) + ' command: /start')
 
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
@@ -57,9 +58,10 @@ def send_welcome(message):
 
         bot.send_message(message.chat.id, 'Вы зарегистрированы')
 
+
 @bot.message_handler(commands=['getall'])
 def getallusers(message):
-    logging.debug('user: ' + str(message.from_user.username) + ' command: /getall')
+    logging.info('user: ' + str(message.from_user.username) + ' command: /getall')
 
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
@@ -68,7 +70,7 @@ def getallusers(message):
     out = ''
     for i in c.execute(querry):
         out += '@' + str(i[1]) + ' | ' + str(i[2]) + ' | ' + str(i[3]) + '\n'
-        out += '🏅' + str(i[4]) + ' ⚔' + str(i[5]) + ' 🛡' + str(i[6]) + ' 🔥' + str(i[7]) + ' 🤺' + str(i[8]) + '\n'
+        out += '🏅' + str(i[4]) + ' ⚔' + str(i[5]) + ' 🛡' + str(i[6]) + ' 🔥' + str(i[7]) + ' 🤺' + str(i[12]) + '\n'
         out += '<code>🤛🏻</code>' + str(i[13]) + '\n'
         out += '<code>🤜🏻</code>' + str(i[14]) + '\n'
         out += '<code>🎩</code>' + str(i[15]) + '\n'
@@ -89,9 +91,10 @@ def getallusers(message):
     conn.commit()
     conn.close()
 
+
 @bot.message_handler(commands=['getme'])
 def getallusers(message):
-    logging.debug('user: ' + str(message.from_user.username) + ' command: /getme')
+    logging.info('user: ' + str(message.from_user.username) + ' command: /getme')
 
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
@@ -101,7 +104,7 @@ def getallusers(message):
         logging.debug(str(i))
 
         out = '@' + str(i[1]) + ' | ' + str(i[2]) + ' | ' + str(i[3]) + '\n'
-        out += '🏅' + str(i[4]) + ' ⚔' + str(i[5]) + ' 🛡' + str(i[6]) + ' 🔥' + str(i[7]) + ' 🤺' + str(i[8]) + '\n'
+        out += '🏅' + str(i[4]) + ' ⚔' + str(i[5]) + ' 🛡' + str(i[6]) + ' 🔥' + str(i[7]) + ' 🤺' + str(i[12]) + '\n'
         out += '<code>🤛🏻</code>' + str(i[13]) + '\n'
         out += '<code>🤜🏻</code>' + str(i[14]) + '\n'
         out += '<code>🎩</code>' + str(i[15]) + '\n'
@@ -122,7 +125,7 @@ def getallusers(message):
 
 @bot.message_handler(commands=['dellall'])
 def getallusers(message):
-    logging.debug('user: ' + str(message.from_user.username) + ' command: /dellall')
+    logging.info('user: ' + str(message.from_user.username) + ' command: /dellall')
 
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
@@ -153,8 +156,12 @@ def getprofile(message):
     conn.commit()
     conn.close()
 
-    if '/class' in message.text and '🇨🇾' in message.text and message.forward_from.id == 265204902 and username in userlist:# and message.forward_date > time.time() - 60:
-        logging.debug('пользователь: ' + str(message.from_user.username) + ' прислал профиль')
+    if '/class' in message.text \
+            and '🇨🇾' in message.text \
+            and message.forward_from.id == 265204902 \
+            and username in userlist:  # and message.forward_date > time.time() - 60:
+
+        logging.info('пользователь: ' + str(message.from_user.username) + ' прислал профиль')
         # niceprint(message.text)
 
         heroinfo = message.text.split('\n')
@@ -284,7 +291,7 @@ def getprofile(message):
         bot.send_message(message.chat.id, 'Профиль обновлен')
 
     else:
-        logging.debug('пользователь: ' + str(message.from_user.username) + ' прислал дерьмовый профиль')
+        logging.info('пользователь: ' + str(message.from_user.username) + ' прислал дерьмовый профиль')
         logging.debug(niceprint(str(message)))
         if username in userlist:
             bot.send_message(message.from_user.id, 'Ты отсылаешь мне какую-то дичь')
@@ -294,8 +301,8 @@ def getprofile(message):
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_all(message):
-    # logging.debug(niceprint(str(message)))
-    logging.debug(str(message.from_user.username) + ': ' + message.text)
+    logging.debug(niceprint(str(message)))
+    logging.info(str(message.from_user.username) + ': ' + message.text)
 
     if 'Ты встретил' in message.text and message.forward_from:
         bot.reply_to(message, '''Напиши первым любое сообщение реплаем на это и забирай моба, если ты не успел, попробуй еще раз
