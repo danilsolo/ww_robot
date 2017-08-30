@@ -8,7 +8,7 @@ import datetime
 import config
 
 BOTCHAT = 76201733
-logging.basicConfig(format = u'%(filename)s[LINE:%(lineno)-4s]# %(levelname)-5s [%(asctime)s] %(message)s', level = logging.INFO)
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)-4s]# %(levelname)-5s [%(asctime)s] %(message)s', level = logging.INFO)
 
 
 def niceprint(string):
