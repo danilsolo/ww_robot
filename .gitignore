@@ -1,3 +1,3 @@
 *.db
-config.py
+./config.py
 .idea/*
