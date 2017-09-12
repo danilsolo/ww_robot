@@ -1,3 +1,5 @@
+import sqlite3
+
 querry = '''
 CREATE TABLE profiles(
     id integer PRIMARY KEY,
@@ -21,12 +23,12 @@ CREATE TABLE profiles(
     legs text default null,
     specials text default null,
     stock integer default 0,
-    pet text default null
+    pet text default null,
+    proftime text default null
 )'''
 
-
-        conn = sqlite3.connect('example.db')
-        c = conn.cursor()
-        #c.execute(querry)
-        conn.commit()
-        conn.close()
+conn = sqlite3.connect('wwbot.db')
+c = conn.cursor()
+c.execute(querry)
+conn.commit()
+conn.close()
