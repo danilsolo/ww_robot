@@ -59,9 +59,9 @@ def send_welcome(message):
         bot.send_message(message.chat.id, 'Вы зарегистрированы')
 
 
-@bot.message_handler(commands=['getall'])
+@bot.message_handler(commands=['getall2'])
 def getallusers(message):
-    logging.info('user: ' + str(message.from_user.username) + ' command: /getall')
+    logging.info('user: ' + str(message.from_user.username) + ' command: /getall2')
 
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
@@ -92,7 +92,7 @@ def getallusers(message):
     conn.close()
 
 
-@bot.message_handler(commands=['getall2'])
+@bot.message_handler(commands=['getall'])
 def getallusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /getall')
 
@@ -121,10 +121,13 @@ def getallusers(message):
         out += '🕐' + str(i[22]) + '\n\n'
 
         logging.info(out)
-
-        if idx % 8 == 0:
+        logging.info(idx)
+        if (idx + 1) % 8 == 0:
             bot.send_message(message.chat.id, out, parse_mode='HTML')
             out = ''
+
+    if out != '':
+        bot.send_message(message.chat.id, out)
     conn.commit()
     conn.close()
 
@@ -160,7 +163,32 @@ def getallusers(message):
     conn.close()
 
 
-@bot.message_handler(commands=['dellall'])
+@bot.message_handler(commands=['del'])
+def getallusers(message):
+    logging.info('user: ' + str(message.from_user.username) + ' command: /dell')
+    logging.info(str(message.text).split())
+
+    try:
+        str(message.text).split()[1]
+    except IndexError:
+        bot.send_message(message.chat.id, 'Укажи имя кого турнуть')
+        return
+    conn = sqlite3.connect('wwbot.db')
+    c = conn.cursor()
+    querry = "select username from profiles where username = '{}'".format(str(message.text).split()[1])
+    logging.debug(querry)
+    for i in c.execute(querry):
+        logging.debug('aaa' + str(i))
+        querry = "delete from profiles where username = '{}'".format(str(message.text).split()[1])
+        logging.debug(querry)
+
+        for j in c.execute(querry):
+            logging.debug(j)
+    conn.commit()
+    conn.close()
+
+
+@bot.message_handler(commands=['delall'])
 def getallusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /dellall')
 
@@ -170,9 +198,12 @@ def getallusers(message):
     logging.debug(querry)
     for i in c.execute(querry):
         logging.debug(str(i))
-        bot.send_message(BOTCHAT, str(i))
+        bot.send_message(message.chat.id, str(i))
     conn.commit()
     conn.close()
+
+
+
 
 
 @bot.message_handler(func=lambda message: message.chat.type == 'private', content_types=['text'])
