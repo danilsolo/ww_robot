@@ -92,6 +92,43 @@ def getallusers(message):
     conn.close()
 
 
+@bot.message_handler(commands=['getall2'])
+def getallusers(message):
+    logging.info('user: ' + str(message.from_user.username) + ' command: /getall')
+
+    conn = sqlite3.connect('wwbot.db')
+    c = conn.cursor()
+    querry = "select * from profiles"
+    logging.debug(querry)
+    out = ''
+
+    for idx, i in enumerate(c.execute(querry)):
+        out += '@' + str(i[1]) + ' | ' + str(i[2]) + ' | ' + str(i[3]) + '\n'
+        out += '🏅' + str(i[4]) + ' ⚔' + str(i[5]) + ' 🛡' + str(i[6]) + ' 🔥' + str(i[7]) + ' 🤺' + str(i[12]) + '\n'
+        out += '🤛🏻' + str(i[13]) + '\n'
+        out += '🤜🏻' + str(i[14]) + '\n'
+        out += '🎩' + str(i[15]) + '\n'
+        out += '👐🏻' + str(i[16]) + '\n'
+        out += '👕' + str(i[17]) + '\n'
+        out += '👢' + str(i[18]) + '\n'
+        out += '🌂' + str(i[19]) + '\n'
+        if str(i[21]) == '':
+            out += '🌿\n'
+        else:
+            out += str(i[21]) + '\n'
+
+        out += '📦' + str(i[20]) + '\n'
+        out += '🕐' + str(i[22]) + '\n\n'
+
+        logging.info(out)
+
+        if idx % 8 == 0:
+            bot.send_message(message.chat.id, out, parse_mode='HTML')
+            out = ''
+    conn.commit()
+    conn.close()
+
+
 @bot.message_handler(commands=['getme'])
 def getallusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /getme')
