@@ -8,7 +8,7 @@ import datetime
 import config
 
 BOTCHAT = 76201733
-logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)-4s]# %(levelname)-5s [%(asctime)s] %(message)s', level = logging.INFO)
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)-3s]# %(levelname)-5s [%(asctime)s] %(message)s', level = logging.INFO)
 
 
 def niceprint(string):
@@ -63,6 +63,9 @@ def send_welcome(message):
 def getallusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /getall2')
 
+    if message.from_user.username not in config.admins:
+        return
+
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
     querry = "select * from profiles"
@@ -95,6 +98,9 @@ def getallusers(message):
 @bot.message_handler(commands=['getall'])
 def getallusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /getall')
+
+    if message.from_user.username not in config.admins:
+        return
 
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
@@ -133,7 +139,7 @@ def getallusers(message):
 
 
 @bot.message_handler(commands=['getme'])
-def getallusers(message):
+def getme(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /getme')
 
     conn = sqlite3.connect('wwbot.db')
@@ -164,9 +170,12 @@ def getallusers(message):
 
 
 @bot.message_handler(commands=['del'])
-def getallusers(message):
+def delusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /dell')
     logging.info(str(message.text).split())
+
+    if message.from_user.username not in config.admins:
+        return
 
     try:
         str(message.text).split()[1]
@@ -189,8 +198,11 @@ def getallusers(message):
 
 
 @bot.message_handler(commands=['delall'])
-def getallusers(message):
+def delallusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /dellall')
+
+    if message.from_user.username not in config.admins:
+        return
 
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
@@ -203,7 +215,37 @@ def getallusers(message):
     conn.close()
 
 
+@bot.message_handler(commands=['showall'])
+def showallusers(message):
+    # logging.debug(niceprint(str(message)))
+    logging.info('user: ' + str(message.from_user.username) + ' command: /showall')
 
+    if message.from_user.username not in config.admins:
+        return
+    conn = sqlite3.connect('wwbot.db')
+    c = conn.cursor()
+    querry = "select * from profiles"
+    logging.debug(querry)
+    out = ''
+
+    for idx, i in enumerate(c.execute(querry)):
+        out += str(i[2]) + '|' + '\n'
+        out += '🏅' + str(i[4]) + ' ⚔' + str(i[5]) + ' 🛡' + str(i[6]) + ' ' + str(i[3])[0] + '\n\n'
+
+        logging.info(out)
+        logging.info(idx)
+        if (idx + 1) % 8 == 0:
+            bot.send_message(message.chat.id, out, parse_mode='HTML')
+            out = ''
+
+    if out != '':
+        bot.send_message(message.chat.id, out)
+    conn.commit()
+    conn.close()
+
+
+# @bot.message_handler(func=lambda message: message.text, content_types=['text'])
+# def getcurrentuser(message):
 
 
 @bot.message_handler(func=lambda message: message.chat.type == 'private', content_types=['text'])
