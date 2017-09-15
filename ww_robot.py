@@ -126,8 +126,6 @@ def getallusers(message):
         out += '📦' + str(i[20]) + '\n'
         out += '🕐' + str(i[22]) + '\n\n'
 
-        logging.info(out)
-        logging.info(idx)
         if (idx + 1) % 8 == 0:
             bot.send_message(message.chat.id, out, parse_mode='HTML')
             out = ''
@@ -172,7 +170,7 @@ def getme(message):
 @bot.message_handler(commands=['del'])
 def delusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /dell')
-    logging.info(str(message.text).split())
+    logging.debug(str(message.text).split())
 
     if message.from_user.username not in config.admins:
         return
@@ -233,21 +231,14 @@ def showallusers(message):
         out += '🏅' + str(i[4]) + ' ⚔' + str(i[5]) + ' 🛡' + str(i[6]) + '|' + str(i[3])[0] + '\n'
         out += '/show_' + str(i[1]) + '\n\n'
 
-        logging.info(out)
-        logging.info(idx)
-        if (idx + 1) % 8 == 0:
-            bot.send_message(message.chat.id, out, parse_mode='HTML')
-            out = ''
-
-    if out != '':
-        bot.send_message(message.chat.id, out)
+    bot.send_message(message.chat.id, out)
     conn.commit()
     conn.close()
 
 
-@bot.message_handler(func=lambda message: '/show' in message.text, content_types=['text'])
+@bot.message_handler(func=lambda message: '/show' in message.text)
 def getcurrentuser(message):
-    # logging.debug(niceprint(str(message)))
+    logging.debug(niceprint(str(message)))
     logging.info('user: ' + str(message.from_user.username) + ' command: /show')
 
     if message.from_user.username not in config.admins:
@@ -469,7 +460,7 @@ def echo_all(message):
     if 'оксан' in message.text.lower():
         bot.reply_to(message, 'Теперь и я знаю как зовут хедину')
 
-    if 'режим тишины' in message.text or 'салфетка' in message.text:
+    if 'режим тишины' in message.text.lower() or 'салфетка' in message.text.lower():
         bot.reply_to(message, config.salfetka)
         bot.pin_chat_message(-1001064490030, message.message_id + 1)
 
