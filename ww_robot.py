@@ -222,7 +222,7 @@ def showallusers(message):
         return
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
-    querry = "select * from profiles"
+    querry = "select * from profiles order by attack"
     logging.debug(querry)
     out = ''
 
@@ -278,6 +278,9 @@ def getprofile(message):
     # logging.debug(time.time())
     # print(str(message.from_user.username) + ': ' + message.text)
     # print(message.text.split('\n'))
+
+    logging.info('user: ' + str(message.from_user.username) + ': ' + str(message.text))
+
     userid = message.from_user.id
     username = message.from_user.username
 
