@@ -8,7 +8,8 @@ import datetime
 import config
 
 BOTCHAT = 76201733
-logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)-3s]# %(levelname)-5s [%(asctime)s] %(message)s', level = logging.INFO)
+logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)-3s]# %(levelname)-5s [%(asctime)s] %(message)s'
+                    , level = logging.INFO)
 
 
 def niceprint(string):
@@ -169,7 +170,7 @@ def getme(message):
 
 @bot.message_handler(commands=['del'])
 def delusers(message):
-    logging.info('user: ' + str(message.from_user.username) + ' command: /dell')
+    logging.info('user: ' + str(message.from_user.username) + ' command: /del')
     logging.debug(str(message.text).split())
 
     if message.from_user.username not in config.admins:
@@ -191,6 +192,7 @@ def delusers(message):
 
         for j in c.execute(querry):
             logging.debug(j)
+
     conn.commit()
     conn.close()
 
@@ -239,7 +241,7 @@ def showallusers(message):
 @bot.message_handler(func=lambda message: '/show' in message.text)
 def getcurrentuser(message):
     logging.debug(niceprint(str(message)))
-    logging.info('user: ' + str(message.from_user.username) + ' command: /show')
+    logging.info('user: ' + str(message.from_user.username) + ' command: ' + message.text)
 
     if message.from_user.username not in config.admins:
         return
@@ -442,8 +444,9 @@ def echo_all(message):
     logging.info(str(message.from_user.username) + ': ' + message.text)
 
     if 'Ты встретил' in message.text and message.forward_from:
-        bot.reply_to(message, '''Напиши первым любое сообщение реплаем на это и забирай моба, если ты не успел, попробуй еще раз
-    @Fenicu @Puzya @danilsolo @Hedina69 @belaya_devushka @nii_batca @Atmopolly @Sicdez''')
+        bot.reply_to(message,
+'''Напиши первым любое сообщение реплаем на это и забирай моба, если ты не успел, попробуй еще раз
+@Puzya @danilsolo @nii_batca @Sicdez''')
 
     if 'хомяк' in message.text:
         bot.reply_to(message, '@Hedina69 тут это, по твою душу')
