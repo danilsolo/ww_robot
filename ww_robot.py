@@ -251,8 +251,8 @@ def getcurrentuser(message):
 
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
-    logging.debug(message.text[6:])
-    querry = "select * from profiles where username = '{}'".format(message.text[6:])
+    logging.debug(message.text[6:message.text.find('@')])
+    querry = "select * from profiles where username = '{}'".format(message.text[6:message.text.find('@')])
     logging.debug(querry)
     for i in c.execute(querry):
         logging.debug(str(i))
