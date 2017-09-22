@@ -7,6 +7,9 @@ import time
 import datetime
 import config
 
+
+
+admins = ['Vozhik', 'belaya_devushka', 'danilsolo', 'MarieKoko', 'Fenicu', 'Wood_elf', 'Puzya']
 BOTCHAT = 76201733
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)-3s]# %(levelname)-5s [%(asctime)s] %(message)s'
                     , level = logging.INFO)
@@ -64,7 +67,7 @@ def send_welcome(message):
 def getallusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /getall2')
 
-    if message.from_user.username not in config.admins:
+    if message.from_user.username not in admins:
         return
 
     conn = sqlite3.connect('wwbot.db')
@@ -100,7 +103,7 @@ def getallusers(message):
 def getallusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /getall')
 
-    if message.from_user.username not in config.admins:
+    if message.from_user.username not in admins:
         return
 
     conn = sqlite3.connect('wwbot.db')
@@ -173,7 +176,7 @@ def delusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /del')
     logging.debug(str(message.text).split())
 
-    if message.from_user.username not in config.admins:
+    if message.from_user.username not in admins:
         return
 
     try:
@@ -201,7 +204,7 @@ def delusers(message):
 def delallusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /dellall')
 
-    if message.from_user.username not in config.admins:
+    if message.from_user.username not in admins:
         return
 
     conn = sqlite3.connect('wwbot.db')
@@ -220,7 +223,7 @@ def showallusers(message):
     # logging.debug(niceprint(str(message)))
     logging.info('user: ' + str(message.from_user.username) + ' command: /showall')
 
-    if message.from_user.username not in config.admins:
+    if message.from_user.username not in admins:
         return
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
@@ -243,7 +246,7 @@ def getcurrentuser(message):
     logging.debug(niceprint(str(message)))
     logging.info('user: ' + str(message.from_user.username) + ' command: ' + message.text)
 
-    if message.from_user.username not in config.admins:
+    if message.from_user.username not in admins:
         return
 
     conn = sqlite3.connect('wwbot.db')
@@ -470,7 +473,7 @@ def echo_all(message):
         bot.reply_to(message, config.salfetka)
         bot.pin_chat_message(-1001064490030, message.message_id + 1)
 
-    if 'пин' in message.text.lower() and message.reply_to_message and message.from_user.username in config.admins:
+    if 'пин' in message.text.lower() and message.reply_to_message and message.from_user.username in admins:
         bot.pin_chat_message(message.chat.id, message.reply_to_message.message_id)
 
 
