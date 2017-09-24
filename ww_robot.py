@@ -7,6 +7,35 @@ import time
 import datetime
 import config
 
+
+
+admins = ['Vozhik', 'belaya_devushka', 'danilsolo', 'MarieKoko', 'Fenicu', 'Wood_elf', 'Puzya']
+
+salfetka = '''
+‼️ Режим тишины! ‼️
+Ходок! Приготовься к атаке (:crossed_swords: Атака) до 'Смелый Вояка, Выбирай врага!'
+
+Если ты вдруг любишь перед боем переодеваться, тебе могут помочь следующие команды. Отправь это сообщение (FORWARD) боту и жми то, что надо надеть:
+:crossed_swords: Оружие:
+Нарсил /on_124
+Экскалибур /on_115
+Меч берсеркера /on_107
+Рапира /on_106
+
+Кинжал триумфа /on_126
+Кинжал демона /on_118
+Кинжал охотника /on_117
+Кинжал: /on_114
+
+Деф:
+Эльфийское копье /on_110
+Мифриловый щит: /on_216
+
+Ходоки не плюсуют в чат!!
+(хэштег #салфетка)
+‼️ Режим тишины! ‼️
+ '''
+
 BOTCHAT = 76201733
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)-3s]# %(levelname)-5s [%(asctime)s] %(message)s'
                     , level = logging.INFO)
@@ -64,7 +93,7 @@ def send_welcome(message):
 def getallusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /getall2')
 
-    if message.from_user.username not in config.admins:
+    if message.from_user.username not in admins:
         return
 
     conn = sqlite3.connect('wwbot.db')
@@ -100,7 +129,7 @@ def getallusers(message):
 def getallusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /getall')
 
-    if message.from_user.username not in config.admins:
+    if message.from_user.username not in admins:
         return
 
     conn = sqlite3.connect('wwbot.db')
@@ -173,7 +202,7 @@ def delusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /del')
     logging.debug(str(message.text).split())
 
-    if message.from_user.username not in config.admins:
+    if message.from_user.username not in admins:
         return
 
     try:
@@ -201,7 +230,7 @@ def delusers(message):
 def delallusers(message):
     logging.info('user: ' + str(message.from_user.username) + ' command: /dellall')
 
-    if message.from_user.username not in config.admins:
+    if message.from_user.username not in admins:
         return
 
     conn = sqlite3.connect('wwbot.db')
@@ -220,7 +249,7 @@ def showallusers(message):
     # logging.debug(niceprint(str(message)))
     logging.info('user: ' + str(message.from_user.username) + ' command: /showall')
 
-    if message.from_user.username not in config.admins:
+    if message.from_user.username not in admins:
         return
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
@@ -238,18 +267,18 @@ def showallusers(message):
     conn.close()
 
 
-@bot.message_handler(func=lambda message: '/show' in message.text)
+@bot.message_handler(func=lambda message: message.text and '/show' in message.text, content_types=['text'])
 def getcurrentuser(message):
     logging.debug(niceprint(str(message)))
     logging.info('user: ' + str(message.from_user.username) + ' command: ' + message.text)
 
-    if message.from_user.username not in config.admins:
+    if message.from_user.username not in admins:
         return
 
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
-    logging.debug(message.text[6:])
-    querry = "select * from profiles where username = '{}'".format(message.text[6:])
+    logging.debug(message.text[6:message.text.find('@')])
+    querry = "select * from profiles where username = '{}'".format(message.text[6:message.text.find('@')])
     logging.debug(querry)
     for i in c.execute(querry):
         logging.debug(str(i))
@@ -274,7 +303,7 @@ def getcurrentuser(message):
     conn.commit()
     conn.close()
 
-@bot.message_handler(func=lambda message: message.chat.type == 'private', content_types=['text'])
+@bot.message_handler(func=lambda message: message.text and message.chat.type == 'private', content_types=['text'])
 def getprofile(message):
     # logging.debug(niceprint(str(message)))
     # logging.debug(time.time())
@@ -282,6 +311,7 @@ def getprofile(message):
     # print(message.text.split('\n'))
 
     logging.info('user: ' + str(message.from_user.username) + ': ' + str(message.text))
+
 
     userid = message.from_user.id
     username = message.from_user.username
@@ -438,10 +468,14 @@ def getprofile(message):
             bot.send_message(message.from_user.id, 'Ты отсылаешь мне какую-то дичь попробуй написать /start')
 
 
-@bot.message_handler(func=lambda message: True, content_types=['text'])
+@bot.message_handler(func=lambda message: message.text and True, content_types=['text'])
 def echo_all(message):
     logging.debug(niceprint(str(message)))
     logging.info(str(message.from_user.username) + ': ' + message.text)
+
+    if datetime.datetime.fromtimestamp(message.date) < datetime.datetime.now()-datetime.timedelta(minutes=1):
+        logging.info('старое сообщение')
+        return
 
     if 'Ты встретил' in message.text and message.forward_from:
         bot.reply_to(message,
@@ -467,10 +501,10 @@ def echo_all(message):
         bot.reply_to(message, 'Теперь и я знаю как зовут хедину')
 
     if 'режим тишины' in message.text.lower() or 'салфетка' in message.text.lower():
-        bot.reply_to(message, config.salfetka)
+        bot.reply_to(message, salfetka)
         bot.pin_chat_message(-1001064490030, message.message_id + 1)
 
-    if 'пин' in message.text.lower() and message.reply_to_message and message.from_user.username in config.admins:
+    if 'пин' in message.text.lower() and message.reply_to_message and message.from_user.username in admins:
         bot.pin_chat_message(message.chat.id, message.reply_to_message.message_id)
 
 
