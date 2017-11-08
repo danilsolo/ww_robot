@@ -277,8 +277,9 @@ def getcurrentuser(message):
 
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
+    end = None if message.text.find('@') == -1 else message.text.find('@')
     logging.debug(message.text[6:message.text.find('@')])
-    querry = "select * from profiles where username = '{}'".format(message.text[6:message.text.find('@')])
+    querry = "select * from profiles where username = '{}'".format(message.text[6:end])
     logging.debug(querry)
     for i in c.execute(querry):
         logging.debug(str(i))
@@ -480,7 +481,7 @@ def echo_all(message):
     if 'Ты встретил' in message.text and message.forward_from:
         bot.reply_to(message,
 '''Напиши первым любое сообщение реплаем на это и забирай моба, если ты не успел, попробуй еще раз
-@Puzya @danilsolo @nii_batca @Sicdez''')
+@anoose @Puzya @danilsolo @nii_batca @Sicdez''')
 
     if 'хомяк' in message.text:
         bot.reply_to(message, '@Hedina69 тут это, по твою душу')
@@ -499,6 +500,12 @@ def echo_all(message):
 
     if 'оксан' in message.text.lower():
         bot.reply_to(message, 'Теперь и я знаю как зовут хедину')
+
+    if 'бан' in message.text.lower():
+        bot.reply_to(message, '@denishus тут это, по твою душу')
+
+    if 'корм' in message.text.lower():
+        bot.reply_to(message, '@Sicdez тут это, по твою душу')
 
     if 'режим тишины' in message.text.lower() or 'салфетка' in message.text.lower():
         bot.reply_to(message, salfetka)
