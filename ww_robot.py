@@ -10,7 +10,13 @@ from telebot import types
 
 
 
+adminskeyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+adminskeyboard.add(*[telebot.types.KeyboardButton(name) for name in ['⚔️Битва', '/getall', '/showall']])
 
+keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+keyboard.add(*[telebot.types.KeyboardButton(name) for name in ['/getme', 'и еще кнопки']])
+
+adminskeyboarhide = telebot.types.ReplyKeyboardRemove()
 
 admins = ['Vozhik', 'belaya_devushka', 'danilsolo', 'MarieKoko', 'Fenicu', 'Wood_elf', 'Puzya']
 
@@ -69,7 +75,11 @@ bot = telebot.TeleBot(config.token)
 def send_welcome(message):
     userid = message.from_user.id
     username = message.from_user.username
+
     logging.info('user: ' + str(username) + ' command: /start')
+
+    if message.chat.type == 'supergroup':
+        return
 
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
@@ -79,7 +89,10 @@ def send_welcome(message):
         userlist.append(row[0])
 
     if username in userlist:
-        bot.send_message(message.chat.id, 'Вы уже зарегистрированы')
+        if username in admins:
+            bot.send_message(message.chat.id, 'Вы уже зарегистрированы', reply_markup=adminskeyboard)
+        else:
+            bot.send_message(message.chat.id, 'Вы уже зарегистрированы', reply_markup=keyboard)
         conn.commit()
         conn.close()
     else:
@@ -123,7 +136,7 @@ def getallusers(message):
         out += '🕐' + str(i[22]) + '\n\n'
 
     logging.debug(out)
-    bot.send_message(message.chat.id, out, parse_mode='HTML')
+    bot.send_message(message.chat.id, out, parse_mode='HTML', reply_markup=adminskeyboarhide)
     conn.commit()
     conn.close()
 
@@ -269,6 +282,42 @@ def showallusers(message):
     conn.commit()
     conn.close()
 
+@bot.message_handler(commands=['addmetomobs'])
+def addmetomobs(message):
+
+    logging.info('user: ' + str(message.from_user.username) + ' command: /addmetomobs')
+
+    conn = sqlite3.connect('wwbot.db')
+    c = conn.cursor()
+
+    for i in c.execute('select username from mobspersons'):
+        if message.from_user.username == i[0]:
+            bot.reply_to(message, 'Вы уже зарегистрированы')
+            return
+
+    querry = "insert into mobspersons values('{}')".format(message.from_user.username)
+    c.execute(querry)
+    logging.debug(querry)
+
+    bot.send_message(message.chat.id, 'Вы добавлены на мобов')
+    conn.commit()
+    conn.close()
+
+@bot.message_handler(commands=['delmefrommobs'])
+def delmetomobs(message):
+
+    logging.info('user: ' + str(message.from_user.username) + ' command: /delmefrommobs')
+
+    conn = sqlite3.connect('wwbot.db')
+    c = conn.cursor()
+
+    querry = "delete from mobspersons where username = ('{}')".format(message.from_user.username)
+    c.execute(querry)
+    logging.debug(querry)
+
+    bot.send_message(message.chat.id, 'Вы удалены с мобов')
+    conn.commit()
+    conn.close()
 
 @bot.message_handler(func=lambda message: message.text and '/show' in message.text, content_types=['text'])
 def getcurrentuser(message):
@@ -482,9 +531,16 @@ def echo_all(message):
         return
 
     if 'Ты встретил' in message.text and message.forward_from:
-        bot.reply_to(message,
-'''Напиши первым любое сообщение реплаем на это и забирай моба, если ты не успел, попробуй еще раз
-@anoose @Puzya @danilsolo @nii_batca @Sicdez''')
+        out = 'Напиши первым любое сообщение реплаем на это и забирай моба, если ты не успел, попробуй еще раз\nСуммонятся:\n'
+        conn = sqlite3.connect('wwbot.db')
+        c = conn.cursor()
+
+        for row in c.execute('select username from mobspersons'):
+            out += '@' + str(row[0]) + ' '
+
+        conn.commit()
+        conn.close()
+        bot.reply_to(message, out)
 
     if 'хомяк' in message.text.lower():
         bot.reply_to(message, '@Hedina69 тут это, по твою душу')
