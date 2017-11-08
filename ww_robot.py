@@ -483,13 +483,13 @@ def echo_all(message):
 '''Напиши первым любое сообщение реплаем на это и забирай моба, если ты не успел, попробуй еще раз
 @anoose @Puzya @danilsolo @nii_batca @Sicdez''')
 
-    if 'хомяк' in message.text:
+    if 'хомяк' in message.text.lower():
         bot.reply_to(message, '@Hedina69 тут это, по твою душу')
 
-    if 'мясо' in message.text:
+    if 'мясо' in message.text.lower():
         bot.reply_to(message, '@Fenicu тут это, по твою душу')
 
-    if 'пес' in message.text:
+    if 'пес' in message.text.lower():
         bot.reply_to(message, '@eegor7 тут это, по твою душу')
 
     if 'Лича (50 ур).' in message.text:
@@ -511,7 +511,7 @@ def echo_all(message):
         bot.reply_to(message, salfetka)
         bot.pin_chat_message(-1001064490030, message.message_id + 1)
 
-    if 'пин' in message.text.lower() and message.reply_to_message and message.from_user.username in admins:
+    if 'пин' in message.text and message.reply_to_message and message.from_user.username in admins:
         bot.pin_chat_message(message.chat.id, message.reply_to_message.message_id)
 
 
