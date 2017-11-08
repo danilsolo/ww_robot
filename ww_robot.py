@@ -14,7 +14,7 @@ adminskeyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
 adminskeyboard.add(*[telebot.types.KeyboardButton(name) for name in ['⚔️Битва', '/getall', '/showall']])
 
 keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-keyboard.add(*[telebot.types.KeyboardButton(name) for name in ['/getme', 'и еще кнопки']])
+keyboard.add(*[telebot.types.KeyboardButton(name) for name in ['/getme', '/addmetomobs', '/delmefrommobs']])
 
 adminskeyboarhide = telebot.types.ReplyKeyboardRemove()
 
@@ -102,7 +102,7 @@ def send_welcome(message):
         conn.commit()
         conn.close()
 
-        bot.send_message(message.chat.id, 'Вы зарегистрированы')
+        bot.send_message(message.chat.id, 'Вы зарегистрированы', reply_markup=keyboard)
 
 
 @bot.message_handler(commands=['getall2'])
@@ -299,7 +299,7 @@ def addmetomobs(message):
     c.execute(querry)
     logging.debug(querry)
 
-    bot.send_message(message.chat.id, 'Вы добавлены на мобов')
+    bot.reply_to(message, 'Вы добавлены на мобов')
     conn.commit()
     conn.close()
 
@@ -315,7 +315,7 @@ def delmetomobs(message):
     c.execute(querry)
     logging.debug(querry)
 
-    bot.send_message(message.chat.id, 'Вы удалены с мобов')
+    bot.reply_to(message, 'Вы удалены с мобов')
     conn.commit()
     conn.close()
 
