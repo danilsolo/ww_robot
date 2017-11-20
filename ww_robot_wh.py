@@ -20,7 +20,7 @@ WEBHOOK_SSL_PRIV = './webhook_pkey.pem'  # Path to the ssl private key
 WEBHOOK_URL_BASE = "https://%s:%s" % (WEBHOOK_HOST, WEBHOOK_PORT)
 WEBHOOK_URL_PATH = "/%s/" % API_TOKEN
 # logger = telebot.logger
-# telebot.logger.setLevel(logging.INFO)
+# telebot.logger.setLevel(logger.info)
 bot = telebot.TeleBot(API_TOKEN)
 app = flask.Flask(__name__)
 
@@ -42,6 +42,7 @@ def webhook():
     else:
         flask.abort(403)
 ###############################################################
+
 
 adminskeyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
 adminskeyboard.add(*[telebot.types.KeyboardButton(name) for name in ['⚔️Битва', '/getall', '/showall']])
@@ -80,7 +81,25 @@ salfetka = '''
 
 BOTCHAT = 76201733
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)-3s]# %(levelname)-5s [%(asctime)s] %(message)s'
-                    ,level = logging.INFO, filename='ww.log')
+                    , level=logging.INFO, filename='ww.log')
+
+# создаём logger
+logger = logging.getLogger()
+logger.setLevel(logger.info)
+
+# создаём консольный handler и задаём уровень
+ch = logging.FileHandler('ww.log')
+ch.setLevel(logger.info)
+
+# создаём formatter
+formatter = logging.Formatter(u'%(filename)s[LINE:%(lineno)-3s]# %(levelname)-5s [%(asctime)s] %(message)s')
+
+# добавляем formatter в ch
+ch.setFormatter(formatter)
+
+
+# добавляем ch к logger
+logger.addHandler(ch)
 
 
 def niceprint(string):
@@ -109,7 +128,7 @@ def send_welcome(message):
     userid = message.from_user.id
     username = message.from_user.username
 
-    logging.info('user: ' + str(username) + ' command: /start')
+    logger.info('user: ' + str(username) + ' command: /start')
 
     if message.chat.type == 'supergroup':
         return
@@ -130,7 +149,7 @@ def send_welcome(message):
         conn.close()
     else:
         querry = "insert into profiles (id, username) values ('{}', '{}')".format(userid, username)
-        logging.debug('new: ' + str(username))
+        logger.debug('new: ' + str(username))
         c.execute(querry)
         conn.commit()
         conn.close()
@@ -140,7 +159,7 @@ def send_welcome(message):
 
 @bot.message_handler(commands=['getall2'])
 def getallusers(message):
-    logging.info('user: ' + str(message.from_user.username) + ' command: /getall2')
+    logger.info('user: ' + str(message.from_user.username) + ' command: /getall2')
 
     if message.from_user.username not in admins:
         return
@@ -148,7 +167,7 @@ def getallusers(message):
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
     querry = "select * from profiles"
-    logging.debug(querry)
+    logger.debug(querry)
     out = ''
     for i in c.execute(querry):
         out += '@' + str(i[1]) + ' | ' + str(i[2]) + ' | ' + str(i[3]) + '\n'
@@ -168,7 +187,7 @@ def getallusers(message):
         out += '📦' + str(i[20]) + '\n'
         out += '🕐' + str(i[22]) + '\n\n'
 
-    logging.debug(out)
+    logger.debug(out)
     bot.send_message(message.chat.id, out, parse_mode='HTML', reply_markup=adminskeyboarhide)
     conn.commit()
     conn.close()
@@ -176,7 +195,7 @@ def getallusers(message):
 
 @bot.message_handler(commands=['getall'])
 def getallusers(message):
-    logging.info('user: ' + str(message.from_user.username) + ' command: /getall')
+    logger.info('user: ' + str(message.from_user.username) + ' command: /getall')
 
     if message.from_user.username not in admins:
         return
@@ -184,7 +203,7 @@ def getallusers(message):
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
     querry = "select * from profiles"
-    logging.debug(querry)
+    logger.debug(querry)
     out = ''
 
     for idx, i in enumerate(c.execute(querry)):
@@ -217,14 +236,14 @@ def getallusers(message):
 
 @bot.message_handler(commands=['getme'])
 def getme(message):
-    logging.info('user: ' + str(message.from_user.username) + ' command: /getme')
+    logger.info('user: ' + str(message.from_user.username) + ' command: /getme')
 
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
     querry = "select * from profiles where id = {}".format(message.from_user.id)
-    logging.debug(querry)
+    logger.debug(querry)
     for i in c.execute(querry):
-        logging.debug(str(i))
+        logger.debug(str(i))
 
         out = '@' + str(i[1]) + ' | ' + str(i[2]) + ' | ' + str(i[3]) + '\n'
         out += '🏅' + str(i[4]) + ' ⚔' + str(i[5]) + ' 🛡' + str(i[6]) + ' 🔥' + str(i[7]) + ' 🤺' + str(i[12]) + '\n'
@@ -248,8 +267,8 @@ def getme(message):
 
 @bot.message_handler(commands=['del'])
 def delusers(message):
-    logging.info('user: ' + str(message.from_user.username) + ' command: /del')
-    logging.debug(str(message.text).split())
+    logger.info('user: ' + str(message.from_user.username) + ' command: /del')
+    logger.debug(str(message.text).split())
 
     if message.from_user.username not in admins:
         return
@@ -262,14 +281,14 @@ def delusers(message):
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
     querry = "select username from profiles where username = '{}'".format(str(message.text).split()[1])
-    logging.debug(querry)
+    logger.debug(querry)
     for i in c.execute(querry):
-        logging.debug('aaa' + str(i))
+        logger.debug('aaa' + str(i))
         querry = "delete from profiles where username = '{}'".format(str(message.text).split()[1])
-        logging.debug(querry)
+        logger.debug(querry)
 
         for j in c.execute(querry):
-            logging.debug(j)
+            logger.debug(j)
 
     conn.commit()
     conn.close()
@@ -277,7 +296,7 @@ def delusers(message):
 
 @bot.message_handler(commands=['delall'])
 def delallusers(message):
-    logging.info('user: ' + str(message.from_user.username) + ' command: /dellall')
+    logger.info('user: ' + str(message.from_user.username) + ' command: /dellall')
 
     if message.from_user.username not in admins:
         return
@@ -285,9 +304,9 @@ def delallusers(message):
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
     querry = "delete from profiles"
-    logging.debug(querry)
+    logger.debug(querry)
     for i in c.execute(querry):
-        logging.debug(str(i))
+        logger.debug(str(i))
         bot.send_message(message.chat.id, str(i))
     conn.commit()
     conn.close()
@@ -295,15 +314,15 @@ def delallusers(message):
 
 @bot.message_handler(commands=['showall'])
 def showallusers(message):
-    # logging.debug(niceprint(str(message)))
-    logging.info('user: ' + str(message.from_user.username) + ' command: /showall')
+    # logger.debug()(niceprint(str(message)))
+    logger.info('user: ' + str(message.from_user.username) + ' command: /showall')
 
     if message.from_user.username not in admins:
         return
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
     querry = "select * from profiles order by attack"
-    logging.debug(querry)
+    logger.debug(querry)
     out = ''
 
     for idx, i in enumerate(c.execute(querry)):
@@ -318,7 +337,7 @@ def showallusers(message):
 @bot.message_handler(commands=['addmetomobs'])
 def addmetomobs(message):
 
-    logging.info('user: ' + str(message.from_user.username) + ' command: /addmetomobs')
+    logger.info('user: ' + str(message.from_user.username) + ' command: /addmetomobs')
 
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
@@ -330,7 +349,7 @@ def addmetomobs(message):
 
     querry = "insert into mobspersons values('{}')".format(message.from_user.username)
     c.execute(querry)
-    logging.debug(querry)
+    logger.debug(querry)
 
     bot.reply_to(message, 'Вы добавлены на мобов')
     conn.commit()
@@ -339,14 +358,14 @@ def addmetomobs(message):
 @bot.message_handler(commands=['delmefrommobs'])
 def delmetomobs(message):
 
-    logging.info('user: ' + str(message.from_user.username) + ' command: /delmefrommobs')
+    logger.info('user: ' + str(message.from_user.username) + ' command: /delmefrommobs')
 
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
 
     querry = "delete from mobspersons where username = ('{}')".format(message.from_user.username)
     c.execute(querry)
-    logging.debug(querry)
+    logger.debug(querry)
 
     bot.reply_to(message, 'Вы удалены с мобов')
     conn.commit()
@@ -354,8 +373,8 @@ def delmetomobs(message):
 
 @bot.message_handler(func=lambda message: message.text and '/show' in message.text, content_types=['text'])
 def getcurrentuser(message):
-    logging.debug(niceprint(str(message)))
-    logging.info('user: ' + str(message.from_user.username) + ' command: ' + message.text)
+    logger.debug(niceprint(str(message)))
+    logger.info('user: ' + str(message.from_user.username) + ' command: ' + message.text)
 
     if message.from_user.username not in admins:
         return
@@ -363,11 +382,11 @@ def getcurrentuser(message):
     conn = sqlite3.connect('wwbot.db')
     c = conn.cursor()
     end = None if message.text.find('@') == -1 else message.text.find('@')
-    logging.debug(message.text[6:message.text.find('@')])
+    logger.debug(message.text[6:message.text.find('@')])
     querry = "select * from profiles where username = '{}'".format(message.text[6:end])
-    logging.debug(querry)
+    logger.debug(querry)
     for i in c.execute(querry):
-        logging.debug(str(i))
+        logger.debug(str(i))
 
         out = '@' + str(i[1]) + ' | ' + str(i[2]) + ' | ' + str(i[3]) + '\n'
         out += '🏅' + str(i[4]) + ' ⚔' + str(i[5]) + ' 🛡' + str(i[6]) + ' 🔥' + str(i[7]) + ' 🤺' + str(i[12]) + '\n'
@@ -383,7 +402,7 @@ def getcurrentuser(message):
         out += '📦' + str(i[20]) + '\n'
         out += '🕐' + str(i[22])[:-7] + '\n'
 
-        logging.debug(out)
+        logger.debug(out)
         bot.send_message(message.chat.id, out, parse_mode='HTML')
         # bot.send_message(message.chat.id, str(i))
     conn.commit()
@@ -391,12 +410,12 @@ def getcurrentuser(message):
 
 @bot.message_handler(func=lambda message: message.text and message.chat.type == 'private', content_types=['text'])
 def getprofile(message):
-    # logging.debug(niceprint(str(message)))
-    # logging.debug(time.time())
+    # logger.debug()(niceprint(str(message)))
+    # logger.debug()(time.time())
     # print(str(message.from_user.username) + ': ' + message.text)
     # print(message.text.split('\n'))
 
-    logging.info('user: ' + str(message.from_user.username) + ': ' + str(message.text))
+    logger.info('user: ' + str(message.from_user.username) + ': ' + str(message.text))
 
 
     userid = message.from_user.id
@@ -416,7 +435,7 @@ def getprofile(message):
             and message.forward_from.id == 265204902 \
             and username in userlist:  # and message.forward_date > time.time() - 60:
 
-        logging.info('пользователь: ' + str(message.from_user.username) + ' прислал профиль')
+        logger.info('пользователь: ' + str(message.from_user.username) + ' прислал профиль')
         # niceprint(message.text)
 
         heroinfo = message.text.split('\n')
@@ -430,83 +449,83 @@ def getprofile(message):
         pet = ''
 
         for param in heroinfo:
-            # logging.debug(param)
+            # logger.debug()(param)
             if param[0:2] in ['🇨🇾', '🇬🇵', '🇪🇺', '🇮🇲', '🇻🇦', '🇲🇴', '🇰🇮']:
                 heroflag = param[:2]
                 heroname = param[2:param.find(',')]
                 heroprof = param[param.find(',')+1:].split()[0]
-                logging.debug('heroflag: ' + heroflag)
-                logging.debug('heroname: ' + str(heroname))
-                logging.debug('hero prof: ' + str(heroprof))
+                logger.debug('heroflag: ' + heroflag)
+                logger.debug('heroname: ' + str(heroname))
+                logger.debug('hero prof: ' + str(heroprof))
 
             if param[0:2] == '🏅У':
                 herolevel = param.split()[1]
-                logging.debug('hero level: ' + str(herolevel))
+                logger.debug('hero level: ' + str(herolevel))
 
             if param[0:1] == '⚔':
                 heroattack = param.split()[1]
                 herodefense = param.split()[3]
-                logging.debug('hero attack: ' + str(heroattack))
-                logging.debug('hero defense: ' + str(herodefense))
+                logger.debug('hero attack: ' + str(heroattack))
+                logger.debug('hero defense: ' + str(herodefense))
 
             if param[0:1] == '🔥':
                 heroexp = param.split()[1].split('/')[0]
-                logging.debug('hero exp: ' + str(heroexp))
+                logger.debug('hero exp: ' + str(heroexp))
 
             if param[0:1] == '🔋':
                 herostamina = param.split()[1].split('/')[0]
-                logging.debug('hero stamina: ' + str(herostamina))
+                logger.debug('hero stamina: ' + str(herostamina))
 
             heromana = 0
             if param[0:1] == '💧':
                 heromana = param.split()[1].split('/')[0]
-                logging.debug('mana: ' + str(heromana))
+                logger.debug('mana: ' + str(heromana))
 
             if param[0:1] == '💰':
                 herogold = param.split()[0][1:]
                 herogems = param.split()[1][1:]
-                logging.debug('hero gold: ' + str(herogold))
-                logging.debug('hero gems: ' + str(herogems))
+                logger.debug('hero gold: ' + str(herogold))
+                logger.debug('hero gems: ' + str(herogems))
 
             if param[0:1] == '🤺':
                 herowins = param.split()[1]
-                logging.debug('hero wins: ' + str(herowins))
+                logger.debug('hero wins: ' + str(herowins))
 
             if param in inventory.swords:
                 herosword = str(param)
-                logging.debug('sword: ' + str(herosword))
+                logger.debug('sword: ' + str(herosword))
 
             if param in inventory.dagger:
                 herosdagger = str(param)
-                logging.debug('dagger: ' + str(herosdagger))
+                logger.debug('dagger: ' + str(herosdagger))
 
             if param in inventory.head:
                 herohead = str(param)
-                logging.debug('head: ' + str(herohead))
+                logger.debug('head: ' + str(herohead))
 
             if param in inventory.arms:
                 heroarms = str(param)
-                logging.debug('arms: ' + str(heroarms))
+                logger.debug('arms: ' + str(heroarms))
 
             if param in inventory.body:
                 herobody = str(param)
-                logging.debug('body: ' + str(herobody))
+                logger.debug('body: ' + str(herobody))
 
             if param in inventory.legs:
                 herolegs = str(param)
-                logging.debug('legs: ' + str(herolegs))
+                logger.debug('legs: ' + str(herolegs))
 
             if param in inventory.specials:
                 herospecials = str(param)
-                logging.debug('specials: ' + str(herospecials))
+                logger.debug('specials: ' + str(herospecials))
 
             if param[0:1] == '📦':
                 herostock = param.split()[1]
-                logging.debug('hero stock: ' + str(herostock))
+                logger.debug('hero stock: ' + str(herostock))
 
             if param[0:2] in inventory.pets:
                 pet = param
-                logging.debug('pet: ' + str(pet))
+                logger.debug('pet: ' + str(pet))
 
         querry ='''update profiles
         set heroflag = '{1}',
@@ -538,7 +557,7 @@ def getprofile(message):
 
         conn = sqlite3.connect('wwbot.db')
         c = conn.cursor()
-        logging.debug(querry)
+        logger.debug(querry)
         c.execute(querry)
         conn.commit()
         conn.close()
@@ -546,8 +565,8 @@ def getprofile(message):
         bot.send_message(message.chat.id, 'Профиль обновлен')
 
     else:
-        logging.info('пользователь: ' + str(message.from_user.username) + ' прислал дерьмовый профиль')
-        logging.debug(niceprint(str(message)))
+        logger.info('пользователь: ' + str(message.from_user.username) + ' прислал дерьмовый профиль')
+        logger.debug(niceprint(str(message)))
         if username in userlist:
             bot.send_message(message.from_user.id, 'Ты отсылаешь мне какую-то дичь')
         else:
@@ -556,11 +575,11 @@ def getprofile(message):
 
 @bot.message_handler(func=lambda message: message.text and True, content_types=['text'])
 def echo_all(message):
-    logging.debug(niceprint(str(message)))
-    logging.info(str(message.from_user.username) + ': ' + message.text)
+    logger.debug(niceprint(str(message)))
+    logger.info(str(message.from_user.username) + ': ' + message.text)
 
     if datetime.datetime.fromtimestamp(message.date) < datetime.datetime.now()-datetime.timedelta(minutes=1):
-        logging.info('старое сообщение')
+        logger.info('старое сообщение')
         return
 
     if 'Ты встретил' in message.text and message.forward_from:
