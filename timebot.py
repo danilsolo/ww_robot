@@ -54,10 +54,10 @@ bot = telebot.TeleBot("439405383:AAEuNE8fZegg00zArV1LEFzAyVd-2Sngea0")
 while 1:
     now = str(datetime.datetime.now().time().replace(microsecond=0))
     if now in ['03:54:59', '07:54:59', '11:54:59', '15:54:59', '19:54:59', '23:54:59']:
-        logging.info('Запуск салфетки по таймеру в:', now)
+        logging.info('Запуск салфетки по таймеру в:' + now)
 
         msg = bot.send_message(-1001064490030, salfetka)
         bot.pin_chat_message(msg.chat.id, msg.message_id)
 
         logging.debug(niceprint(str(msg)))
-        time.sleep(1)
+    time.sleep(1)
