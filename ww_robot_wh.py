@@ -85,11 +85,11 @@ logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)-3s]# %(levelname)-5s [%
 
 # создаём logger
 logger = logging.getLogger()
-logger.setLevel(logger.info)
+logger.setLevel(logging.INFO)
 
 # создаём консольный handler и задаём уровень
 ch = logging.FileHandler('ww.log')
-ch.setLevel(logger.info)
+ch.setLevel(logging.INFO)
 
 # создаём formatter
 formatter = logging.Formatter(u'%(filename)s[LINE:%(lineno)-3s]# %(levelname)-5s [%(asctime)s] %(message)s')
