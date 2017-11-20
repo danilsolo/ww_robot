@@ -81,7 +81,7 @@ salfetka = '''
 
 BOTCHAT = 76201733
 logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)-3s]# %(levelname)-5s [%(asctime)s] %(message)s'
-                    , level=logging.INFO, filename='ww.log')
+                    , level=logging.INFO)
 
 # создаём logger
 logger = logging.getLogger()
