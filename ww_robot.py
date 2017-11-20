@@ -531,7 +531,8 @@ def echo_all(message):
         return
 
     if 'Ты встретил' in message.text and message.forward_from:
-        out = 'Напиши первым любое сообщение реплаем на это и забирай моба, если ты не успел, попробуй еще раз\nСуммонятся:\n'
+        out = 'Напиши первым любое сообщение реплаем на это и забирай моба, если ты не успел, '
+        out += 'попробуй еще раз\nСуммонятся:\n'
         conn = sqlite3.connect('wwbot.db')
         c = conn.cursor()
 
@@ -560,8 +561,8 @@ def echo_all(message):
     if 'оксан' in message.text.lower():
         bot.reply_to(message, 'Теперь и я знаю как зовут хедину')
 
-    if 'бан' in message.text.lower():
-        bot.reply_to(message, '@denishus тут это, по твою душу')
+    # if 'бан' in message.text.lower():
+    #     bot.reply_to(message, '@denishus тут это, по твою душу')
 
     if 'корм' in message.text.lower():
         bot.reply_to(message, '@Sicdez тут это, по твою душу')
