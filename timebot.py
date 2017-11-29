@@ -56,8 +56,37 @@ while 1:
     if now in ['03:54:59', '07:54:59', '11:54:59', '15:54:59', '19:54:59', '23:54:59']:
         logging.info('Запуск салфетки по таймеру в:' + now)
 
+        bot.send_message(-1001064490030, 'СКОРО БИТВА @lolinyan @f0xpwnz @pongg8 @Sicdez @danilsolo')
+        bot.send_message(-1001064490030, 'СКОРО БИТВА @Lybot0 @mperrrsh @nii_batca @Puzya @Wood_elf')
+        bot.send_message(-1001064490030, 'СКОРО БИТВА @klim9379992 @mirotvArec @FoolishDreamer @nitroacid @TrentorEx')
+        bot.send_message(-1001064490030, 'СКОРО БИТВА @Fenicu @SYMRAK @komakomakoma @eegor7 @SenyaArt')
+        bot.send_message(-1001064490030, 'СКОРО БИТВА @Irrissa @bigup_universe @Sympho @baka_bunny @Dinker9')
+        bot.send_message(-1001064490030, 'СКОРО БИТВА @DiKill @l2aggron @anoouse')
+
         msg = bot.send_message(-1001064490030, salfetka)
         bot.pin_chat_message(msg.chat.id, msg.message_id)
 
         logging.debug(niceprint(str(msg)))
+
+    if now in ['03:58:30', '07:58:30', '11:58:30', '15:58:30', '19:58:30', '23:58:30']:
+        logging.info('Запуск салфетки по таймеру в:' + now)
+
+        bot.send_message(-1001064490030, 'БИТВА @lolinyan @f0xpwnz @pongg8 @Sicdez @danilsolo')
+        bot.send_message(-1001064490030, 'БИТВА @Lybot0 @mperrrsh @nii_batca @Puzya @Wood_elf')
+        bot.send_message(-1001064490030, 'БИТВА @klim9379992 @mirotvArec @FoolishDreamer @nitroacid @TrentorEx')
+        bot.send_message(-1001064490030, 'БИТВА @Fenicu @SYMRAK @komakomakoma @eegor7 @SenyaArt')
+        bot.send_message(-1001064490030, 'БИТВА @Irrissa @bigup_universe @Sympho @baka_bunny @Dinker9')
+        bot.send_message(-1001064490030, 'БИТВА @DiKill @l2aggron @anoouse')
+
+    if now in ['03:31:59', '07:31:59', '11:31:59', '15:31:59', '19:31:59', '23:31:59']:
+        logging.info('Запуск салфетки по таймеру в:' + now)
+
+        bot.send_message(-1001064490030, 'Ткни плюс @lolinyan @f0xpwnz @pongg8 @Sicdez @danilsolo')
+        bot.send_message(-1001064490030, 'Ткни плюс @Lybot0 @mperrrsh @nii_batca @Puzya @Wood_elf')
+        bot.send_message(-1001064490030, 'Ткни плюс @klim9379992 @mirotvArec @FoolishDreamer @nitroacid @TrentorEx')
+        bot.send_message(-1001064490030, 'Ткни плюс @Fenicu @SYMRAK @komakomakoma @eegor7 @SenyaArt')
+        bot.send_message(-1001064490030, 'Ткни плюс @Irrissa @bigup_universe @Sympho @baka_bunny @Dinker9')
+        bot.send_message(-1001064490030, 'Ткни плюс @DiKill @l2aggron @anoouse')
+
+
     time.sleep(1)
